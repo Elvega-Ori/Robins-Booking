@@ -5,6 +5,7 @@ Description: Плагин для бронирования номеров в от
 Version: 0.02
 Author: Vega Ori
 GitHub Plugin URI: https://github.com/Elvega-Ori/Robins-Booking
+Primary Branch: main
 */
 
 if (!defined('ABSPATH')) {
