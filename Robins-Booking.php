@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 // Регистрация меню в админке
 function hb_register_menu() {
-    add_menu_page('Robins-Booking', 'Бронирование', 'manage_options', 'hb_admin', 'hb_admin_page', 'dashicons-calendar-alt', 6);
+    add_menu_page('Robins-Booking', 'Robins-Booking', 'manage_options', 'hb_admin', 'hb_admin_page', 'dashicons-calendar-alt', 6);
 }
 add_action('admin_menu', 'hb_register_menu');
 
