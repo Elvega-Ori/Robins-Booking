@@ -2,7 +2,7 @@
 /*
 Plugin Name: Robins-Booking
 Description: Плагин для бронирования номеров в отеле.
-Version: 0.01
+Version: 0.015
 Author: Vega Ori
 GitHub Plugin URI: https://github.com/Elvega-Ori/Robins-Booking
 */
