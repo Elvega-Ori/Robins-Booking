@@ -4,6 +4,7 @@ Plugin Name: Hotel Booking
 Description: Плагин для бронирования номеров в отеле.
 Version: 0.01
 Author: Vega Ori
+GitHub Plugin URI: https://github.com/Elvega-Ori/Robins-Booking
 */
 
 if (!defined('ABSPATH')) {
