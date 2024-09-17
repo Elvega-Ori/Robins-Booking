@@ -2,7 +2,7 @@
 /*
 Plugin Name: Robins-Booking
 Description: Плагин для бронирования номеров в отеле.
-Version: 0.015
+Version: 0.02
 Author: Vega Ori
 GitHub Plugin URI: https://github.com/Elvega-Ori/Robins-Booking
 */
@@ -140,6 +140,20 @@ function hb_create_booking_table() {
 }
 register_activation_hook(__FILE__, 'hb_create_booking_table');
 
+// Подключение jQuery UI в админке
+function hb_enqueue_admin_scripts($hook) {
+    // Проверка, что это страница администрирования плагина
+    if ($hook != 'toplevel_page_hb_admin') {
+        return;
+    }
+
+    // Подключение стилей и скриптов jQuery UI
+    wp_enqueue_style('jquery-ui-style', 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
+    wp_enqueue_script('jquery-ui-datepicker', 'https://code.jquery.com/ui/1.12.1/jquery-ui.js', array('jquery'), null, true);
+    wp_enqueue_script('hb-admin-script', plugins_url('/js/admin.js', __FILE__), array('jquery', 'jquery-ui-datepicker'), null, true);
+}
+add_action('admin_enqueue_scripts', 'hb_enqueue_admin_scripts');
+
 // Форма бронирования для отображения на сайте
 function hb_booking_form() {
     global $wpdb;
@@ -154,9 +168,9 @@ function hb_booking_form() {
     echo '</select><br>';
 
     echo '<label>Дата заезда:</label>';
-    echo '<input type="date" name="checkin_date" required><br>';
+    echo '<input type="text" id="checkin_date" name="checkin_date" required><br>';
     echo '<label>Дата выезда:</label>';
-    echo '<input type="date" name="checkout_date" required><br>';
+    echo '<input type="text" id="checkout_date" name="checkout_date" required><br>';
     echo '<input type="submit" value="Забронировать">';
     echo '</form>';
 }
@@ -172,4 +186,21 @@ function hb_check_availability($room_id, $checkin_date, $checkout_date) {
     
     return empty($bookings);
 }
+
+// JavaScript для инициализации Datepicker
+function hb_enqueue_scripts() {
+    ?>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $("#checkin_date").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+            $("#checkout_date").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+        });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'hb_enqueue_scripts');
 ?>
