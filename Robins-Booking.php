@@ -61,14 +61,43 @@ function hb_list_rooms() {
     $rooms = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}hotel_rooms");
     
     if ($rooms) {
-        echo '<table><tr><th>Номер</th><th>Цена</th><th>Описание</th></tr>';
+        echo '<table><tr><th>Номер</th><th>Цена</th><th>Описание</th><th>Действия</th></tr>';
         foreach ($rooms as $room) {
-            echo "<tr><td>{$room->name}</td><td>{$room->price}</td><td>{$room->description}</td></tr>";
+            echo "<tr>
+                <td>{$room->name}</td>
+                <td>{$room->price}</td>
+                <td>{$room->description}</td>
+                <td><a href=\"?page=hb_admin&action=delete_room&room_id={$room->id}\">Удалить</a></td>
+            </tr>";
         }
         echo '</table>';
     } else {
         echo '<p>Номера не найдены.</p>';
     }
+
+    // Обработка удаления номера
+    if (isset($_GET['action']) && $_GET['action'] == 'delete_room' && isset($_GET['room_id'])) {
+        hb_delete_room(intval($_GET['room_id']));
+    }
+}
+
+// Функция удаления номера
+function hb_delete_room($room_id) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'hotel_rooms';
+    
+    // Удаляем номер
+    $deleted = $wpdb->delete($table_name, array('id' => $room_id));
+    
+    if ($deleted) {
+        echo '<p>Номер удален!</p>';
+    } else {
+        echo '<p>Ошибка при удалении номера.</p>';
+    }
+
+    // Перенаправляем на страницу списка номеров после удаления
+    wp_redirect(admin_url('admin.php?page=hb_admin'));
+    exit;
 }
 
 // Создание таблицы в БД при активации плагина
@@ -90,6 +119,26 @@ function hb_create_tables() {
     dbDelta($sql);
 }
 register_activation_hook(__FILE__, 'hb_create_tables');
+
+// Создание таблицы для бронирований
+function hb_create_booking_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'hotel_bookings';
+    
+    $charset_collate = $wpdb->get_charset_collate();
+    
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        room_id mediumint(9) NOT NULL,
+        checkin_date date NOT NULL,
+        checkout_date date NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+    
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+register_activation_hook(__FILE__, 'hb_create_booking_table');
 
 // Форма бронирования для отображения на сайте
 function hb_booking_form() {
@@ -123,24 +172,4 @@ function hb_check_availability($room_id, $checkin_date, $checkout_date) {
     
     return empty($bookings);
 }
-
-// Создание таблицы для бронирований
-function hb_create_booking_table() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'hotel_bookings';
-    
-    $charset_collate = $wpdb->get_charset_collate();
-    
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        room_id mediumint(9) NOT NULL,
-        checkin_date date NOT NULL,
-        checkout_date date NOT NULL,
-        PRIMARY KEY  (id)
-    ) $charset_collate;";
-    
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
-}
-register_activation_hook(__FILE__, 'hb_create_booking_table');
 ?>
