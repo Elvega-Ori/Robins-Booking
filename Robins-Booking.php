@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Hotel Booking
+Plugin Name: Robins-Booking
 Description: Плагин для бронирования номеров в отеле.
 Version: 0.01
 Author: Vega Ori
